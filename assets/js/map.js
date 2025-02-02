@@ -18,8 +18,8 @@ function initMap() {
 
     // Initialize map and legend
     Promise.all([
-        fetch('assets/data/parcels.geojson').then(resp => resp.json()),
-        fetch('assets/data/dimensions.geojson').then(resp => resp.json())
+        fetch('./assets/data/parcels.geojson').then(resp => resp.json()),
+        fetch('./assets/data/dimensions.geojson').then(resp => resp.json())
     ]).then(([parcelsData, pointsData]) => {
         // Store dimensions data
         dimensionsData = pointsData;
