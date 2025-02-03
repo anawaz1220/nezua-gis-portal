@@ -100,9 +100,13 @@ function showLabelsForPlot(plot_id) {
         const text = point.properties.Text;
         const angle = point.properties.angle;
         
+        // const label = L.divIcon({
+        //     className: 'custom-label',
+        //     html: `<div style="transform: rotate(${angle}deg);">${text}</div>`
+        // });
         const label = L.divIcon({
             className: 'custom-label',
-            html: `<div style="transform: rotate(${angle}deg);">${text}</div>`
+            html: `<div>${text}</div>`
         });
 
         const labelMarker = L.marker([coords[1], coords[0]], {

@@ -14,6 +14,7 @@ class MapLegend {
     createLegendElement() {
         const legend = document.createElement('div');
         legend.className = 'map-legend';
+        
         legend.innerHTML = `
             <div class="legend-header">
                 <span>Legend</span>
@@ -26,6 +27,7 @@ class MapLegend {
                 ${this.createLegendItems()}
             </div>
         `;
+        
         document.body.appendChild(legend);
         this.element = legend;
     }
@@ -49,7 +51,20 @@ class MapLegend {
     toggleCollapse() {
         this.isCollapsed = !this.isCollapsed;
         this.element.classList.toggle('collapsed');
+        
         const toggleText = this.element.querySelector('.legend-toggle-text');
         toggleText.textContent = this.isCollapsed ? 'Expand' : 'Collapse';
+    }
+
+    collapse() {
+        if (!this.isCollapsed) {
+            this.toggleCollapse();
+        }
+    }
+
+    expand() {
+        if (this.isCollapsed) {
+            this.toggleCollapse();
+        }
     }
 }
