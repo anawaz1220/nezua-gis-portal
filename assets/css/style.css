@@ -37,3 +37,19 @@ body {
 .navbar img {
     height: 40px;
 }
+
+/* Add to style.css */
+.dimension-line {
+    pointer-events: none;
+    stroke-linecap: round;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

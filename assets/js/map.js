@@ -2,6 +2,7 @@
 let map;
 let currentLayer;
 let dimensionsData = null;
+let dimensionLinesData = null;
 let currentLabels = [];
 
 function initMap() {
@@ -10,6 +11,8 @@ function initMap() {
         maxZoom: 20,
         minZoom: 15
     });
+    map.createPane('dimensionPane');
+    map.getPane('dimensionPane').style.zIndex = 650;
 
     // Adding satellite basemap
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -18,21 +21,24 @@ function initMap() {
 
     // Initialize map and legend
     Promise.all([
-        fetch('./assets/data/parcels.geojson').then(resp => resp.json()),
-        fetch('./assets/data/dimensions.geojson').then(resp => resp.json())
-    ]).then(([parcelsData, pointsData]) => {
-        // Store dimensions data
+        fetch('./assets/data/lots.geojson').then(resp => resp.json()),
+        fetch('./assets/data/dimensions.geojson').then(resp => resp.json()),
+        fetch('./assets/data/dimension_lines.geojson').then(resp => resp.json())
+    ]).then(([parcelsData, pointsData, linesData]) => {
+        // Store both dimensions data
         dimensionsData = pointsData;
-
+        dimensionLinesData = linesData;
+    
         // Add parcels layer
         const geoJsonLayer = L.geoJSON(parcelsData, {
             style: stylePolygon,
-            onEachFeature: onEachFeature
+            onEachFeature: onEachFeature,
+            pane: 'overlayPane'
         }).addTo(map);
-
+    
         // Initialize legend
         new MapLegend(CATEGORY_COLORS);
-
+    
         // Fit map to parcels bounds
         map.fitBounds(geoJsonLayer.getBounds(), {
             padding: [50, 50]
@@ -47,6 +53,7 @@ function initMap() {
         }
         hideDrawer();
         clearLabels();
+        clearDimensionLines();
     });
 }
 
@@ -68,22 +75,20 @@ function onEachFeature(feature, layer) {
         layer.setStyle({ weight: 4 });
         currentLayer = layer;
         
-        // Get bounds of the clicked polygon and fly to it
         const bounds = layer.getBounds();
         map.flyToBounds(bounds, {
             padding: [50, 50],
             duration: 0.8,
-            maxZoom: 19  // Adjust this value to control zoom level
+            maxZoom: 19
         });
         
         showDrawer(feature.properties);
         showLabelsForPlot(feature.properties.plot_id);
+        showDimensionLinesForPlot(feature.properties.plot_id);
         
-        // Stop the click event from propagating to the map
         L.DomEvent.stopPropagation(e);
     });
 }
-
 function showLabelsForPlot(plot_id) {
     // Clear existing labels
     clearLabels();
