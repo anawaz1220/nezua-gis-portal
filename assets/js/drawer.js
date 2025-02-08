@@ -34,6 +34,19 @@ function hideDrawer() {
 function createPropertyItems(properties) {
     const items = [
         { 
+            label: 'Price', 
+            value: '$100,000', 
+            icon: 'attach_money',
+            specialClass: 'price-value'
+        },
+        { 
+            label: 'Status', 
+            value: 'For Sale', 
+            icon: 'sell',
+            isChip: true,
+            chipColor: '#4CAF50'
+        },
+        { 
             label: 'Area', 
             value: properties.area_m, 
             icon: 'square_foot'
@@ -67,13 +80,26 @@ function createPropertyItems(properties) {
         }
     ];
 
-    return items.map(item => createPropertyItem(item)).join('');
+    const propertyItemsHtml = items.map(item => createPropertyItem(item)).join('');
+    
+    // Add Buy button
+    const buyButtonHtml = `
+        <div class="property-item buy-button-container">
+            <a href="https://costadenica.com" target="_blank" class="buy-button">
+                <i class="material-icons">shopping_cart</i>
+                Buy Now
+            </a>
+        </div>
+    `;
+
+    return propertyItemsHtml + buyButtonHtml;
 }
 
-function createPropertyItem({ label, value, icon, isChip, chipColor }) {
+function createPropertyItem({ label, value, icon, isChip, chipColor, specialClass }) {
+    const valueClass = specialClass ? ` ${specialClass}` : '';
     const formattedValue = isChip 
         ? `<div class="property-chip" style="background-color: ${chipColor || 'var(--primary-purple)'}">${value}</div>`
-        : `<div class="property-value">${value}</div>`;
+        : `<div class="property-value${valueClass}">${value}</div>`;
 
     return `
         <div class="property-item">
@@ -88,7 +114,6 @@ function createPropertyItem({ label, value, icon, isChip, chipColor }) {
 
 function formatArea(area) {
     if (!area) return 'N/A';
-    // Format area with comma separators and 2 decimal places
     return Number(area).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -96,7 +121,6 @@ function formatArea(area) {
 }
 
 function getCategoryColor(category) {
-    // Use the same colors as defined in utils.js
     return CATEGORY_COLORS[category] || '#4A90E2';
 }
 
